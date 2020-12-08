@@ -6,7 +6,7 @@ const Post = require("./post.model")
 
 const commentSchema = new Schema({
     createdBy: {type: Schema.Types.ObjectId, ref:"User"},
-    commmentContent: String,
+    commentContent: String,
     post: {type: Schema.Types.ObjectId, ref:"Post"},
   }, {
   timestamps: {

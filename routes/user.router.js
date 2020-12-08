@@ -1,6 +1,8 @@
 const express = require("express");
 const User = require("../models/user.model");
 const router = express.Router();
+const createError = require("http-errors");
+
 
 router.get('/', (req, res, next)=>{
     User.find().populate("posts")
@@ -36,7 +38,7 @@ router.put('/:id/follow', (req, res, next)=>{
         .then((updatedCurrentUser)=>{
             res.status(200).json(updatedCurrentUser)
 
-
+            
     }).catch(err =>{
         next( createError(err) );
 

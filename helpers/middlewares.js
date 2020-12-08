@@ -22,6 +22,19 @@ exports.validationLogin = (req, res, next) => {
 };
 
 
+exports.isAdmin = (req, res, next) => {
+  const {id} = req.params
+  const currentUserId = req.session.currentUser
+  if(id === currentUserId){
+    next()
+  }
+  else{
+    next(createError(401));
+
+  }
+}
+
+
 
 // Above exporting is same as what we did before:
 // exports = {
