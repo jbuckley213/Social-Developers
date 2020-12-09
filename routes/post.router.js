@@ -12,6 +12,7 @@ router.post("/", (req, res, next)=>{
 
     Post.create({postedBy, postContent, likes:[], comments:[]})
     .then((createdPost)=>{
+
         const pr = User.findByIdAndUpdate(postedBy, {$push:{posts:createdPost._id}}, {new:true})
         return pr
     }).then((updatedUser)=>{
@@ -25,48 +26,71 @@ router.post("/", (req, res, next)=>{
 
 })
 
-// router.get("/", (req, res, next)=>{
-//     const { id } = req.params;
-//     const currentUserId = req.session.currentUser._id
-   
-
-//     User.find({"followers":{$in:[currentUserId]}}).populate("posts")
-//     .then((foundUsers)=>{
-//         res.status(201).json(foundUsers)
-//     }).catch((err)=>{
-//         res.status(500).json(err)
-
-//     })
-// })
-
 router.get("/", (req, res, next)=>{
     const currentUserId = req.session.currentUser._id
+
+    const populateQuery = {
+        path: 'posts',
+        model: 'Post',
+        populate: {
+            path: 'postedBy',
+            model: 'User'
+        }
+    }
    
 
-    User.findById(currentUserId)
-    .then((currentUser)=>{
-        const following = currentUser.following
-
-       const pr =  following.map((oneUserFollow)=>{
-          return Post.find({postedBy:oneUserFollow}).populate("posts")
-       })
-       const allPromises = Promise.all(pr)
-       return allPromises;
-    }).then((posts)=>{
-        res.status(200).json(posts)
-    })
-    .catch((err)=>{
-        next( createError(err) );
+    User.find({"followers":{$in:[currentUserId]}}).populate(populateQuery)
+    .then((foundUsers)=>{
+        res.status(201).json(foundUsers)
+    }).catch((err)=>{
+        res.status(500).json(err)
 
     })
 })
 
 
+// Get all posted by users who have followed
+// router.get("/", (req, res, next)=>{
+//     const currentUserId = req.session.currentUser._id
+   
+
+//     User.findById(currentUserId)
+//     .then((currentUser)=>{
+//         const following = currentUser.following
+
+//        const pr =  following.map((oneUserFollow)=>{
+//           return Post.find({postedBy:oneUserFollow}).populate("posts")
+//        })
+//        const allPromises = Promise.all(pr)
+//        return allPromises;
+//     }).then((posts)=>{
+//         res.status(200).json(posts)
+//     })
+//     .catch((err)=>{
+//         next( createError(err) );
+
+//     })
+// })
+
+
 
 
 router.get("/:postId", (req, res, next)=>{
+    
+
+    const populateQuery = {
+        path: 'comments',
+        model: 'Comment',
+        populate: {
+            path: 'createdBy',
+            model: 'User'
+        }
+    }
+
     const { postId } = req.params;
-    Post.findById(postId).then((onePost)=>{
+    console.log(req.params.postId)
+    Post.findById(postId).populate("postedBy").populate("likes").populate(populateQuery)
+    .then((onePost)=>{
         res.status(201).json(onePost)
     }).catch((err)=>{
         next( createError(err) );
@@ -191,6 +215,7 @@ router.post("/:postId/comment", (req, res, next)=>{
     const { postId } = req.params;
     const currentUserId = req.session.currentUser._id
     const { commentContent } = req.body;
+    console.log(req.body)
 
     Comment.create({createdBy:currentUserId, commentContent, post:postId})
     .then((createComment => {

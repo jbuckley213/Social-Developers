@@ -14,7 +14,7 @@ exports.isNotLoggedIn = (req, res, next) => {
 
 exports.validationLogin = (req, res, next) => {
   const { email, password } = req.body;
-
+  console.log(req.body)
   if (!email || !password){
     next(createError(400));
   } 
@@ -24,12 +24,15 @@ exports.validationLogin = (req, res, next) => {
 
 exports.isAdmin = (req, res, next) => {
   const {id} = req.params
-  const currentUserId = req.session.currentUser
-  if(id === currentUserId){
+  const currentUserId = req.session.currentUser._id
+
+  if(id === currentUserId.toString()){
+    req.isAdmin = true
     next()
   }
   else{
-    next(createError(401));
+    req.isAdmin = false
+    next()
 
   }
 }

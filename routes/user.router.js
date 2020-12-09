@@ -3,25 +3,26 @@ const User = require("../models/user.model");
 const router = express.Router();
 const createError = require("http-errors");
 
+const {isAdmin} = require("../helpers/middlewares");
 
 router.get('/', (req, res, next)=>{
     User.find().populate("posts")
     .then((users)=>{
         res.status(200).json(users)
     }).catch(err => {
-        res.status(500).json(500)
+        next( createError(err) );
     })
 })
 
-router.get('/:id', (req, res, next)=>{
+router.get('/:id', isAdmin, (req, res, next)=>{
 
     const { id } = req.params
-
-    User.findById(id).populate("posts")
-    .then((users)=>{
-        res.status(200).json(users)
+    const isAdmin = req.isAdmin
+    User.findById(id).populate("posts").populate("likes").populate("following")
+    .then((user)=>{
+        res.status(200).json({user, isAdmin})
     }).catch(err => {
-        res.status(500).json(500)
+        next( createError(err) );
     })
 })
 
@@ -38,7 +39,7 @@ router.put('/:id/follow', (req, res, next)=>{
         .then((updatedCurrentUser)=>{
             res.status(200).json(updatedCurrentUser)
 
-            
+
     }).catch(err =>{
         next( createError(err) );
 
