@@ -19,7 +19,7 @@ const userCollection = [
         followers: [],
         following: [],
         likes: [],
-        photo: "https://media-exp1.licdn.com/dms/image/C4D03AQHYuar1U749Sw/profile-displayphoto-shrink_800_800/0/1603631730533?e=1611792000&v=beta&t=vN0VYcszcBZGduvKnM3THZ2aF3pQOhgxvhC7lWev6ck",
+        image: "https://media-exp1.licdn.com/dms/image/C4D03AQHYuar1U749Sw/profile-displayphoto-shrink_800_800/0/1603631730533?e=1611792000&v=beta&t=vN0VYcszcBZGduvKnM3THZ2aF3pQOhgxvhC7lWev6ck",
     },
     {
         firstName: "Sergi",
@@ -30,7 +30,7 @@ const userCollection = [
         followers: [],
         following: [],
         likes: [],
-        photo: "https://media-exp1.licdn.com/dms/image/C5635AQHeaycbwChc5g/profile-framedphoto-shrink_800_800/0?e=1606496400&v=beta&t=ueaB6nGMBSTRuWGLq9yfTVcq1369HCC4WzYpBtWhDHY",
+        image: "https://media-exp1.licdn.com/dms/image/C5635AQHeaycbwChc5g/profile-framedphoto-shrink_800_800/0?e=1606496400&v=beta&t=ueaB6nGMBSTRuWGLq9yfTVcq1369HCC4WzYpBtWhDHY",
     },
     {
         firstName: "Lucy",
@@ -41,7 +41,7 @@ const userCollection = [
         followers: [],
         following: [],
         likes: [],
-        photo: "https://media-exp1.licdn.com/dms/image/C4D03AQFOUqw7rw-ACw/profile-displayphoto-shrink_800_800/0?e=1611792000&v=beta&t=QxUi-WHKlb3IRsqSrv-OyqfwX4nBkA7_X5OrFvk-aVo",
+        image: "https://media-exp1.licdn.com/dms/image/C4D03AQFOUqw7rw-ACw/profile-displayphoto-shrink_800_800/0?e=1611792000&v=beta&t=QxUi-WHKlb3IRsqSrv-OyqfwX4nBkA7_X5OrFvk-aVo",
     },
     {
         firstName: "Salvatore",
@@ -52,7 +52,7 @@ const userCollection = [
         followers: [],
         following: [],
         likes: [],
-        photo: "https://media-exp1.licdn.com/dms/image/C4E35AQGB6GnTBmZeaA/profile-framedphoto-shrink_800_800/0/1606231338392?e=1606496400&v=beta&t=A3FPI9lV3VMztshtJ-zynCzSYu_1nHfp85TVEu3Sw7w",
+        image: "https://media-exp1.licdn.com/dms/image/C4E35AQGB6GnTBmZeaA/profile-framedphoto-shrink_800_800/0/1606231338392?e=1606496400&v=beta&t=A3FPI9lV3VMztshtJ-zynCzSYu_1nHfp85TVEu3Sw7w",
     },
     {
         firstName: "Jaime",
@@ -63,7 +63,7 @@ const userCollection = [
         followers: [],
         following: [],
         likes: [],
-        photo: "https://media-exp1.licdn.com/dms/image/C4D03AQEYB7Kdv7-TWg/profile-displayphoto-shrink_800_800/0?e=1611792000&v=beta&t=Gw_cHBixy2oJa2ThcnCSmx6v6RdY4o4WlQishjkofGs",
+        image: "https://media-exp1.licdn.com/dms/image/C4D03AQEYB7Kdv7-TWg/profile-displayphoto-shrink_800_800/0?e=1611792000&v=beta&t=Gw_cHBixy2oJa2ThcnCSmx6v6RdY4o4WlQishjkofGs",
     }
 ]
 

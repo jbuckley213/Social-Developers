@@ -13,6 +13,9 @@ const userSchema = new Schema({
   followers: [{type: Schema.Types.ObjectId, ref:"User"}],
   following: [{type: Schema.Types.ObjectId, ref:"User"}],
   likes: [{type: Schema.Types.ObjectId, ref:"Post"}],
+  notifications: [{post:{type: Schema.Types.ObjectId, ref:"Post"}, user:{type: Schema.Types.ObjectId, ref:"User"} ,info:String}],
+  newNotification:Boolean,
+
 
 
 }, {

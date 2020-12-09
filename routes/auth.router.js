@@ -136,7 +136,7 @@ router.get('/me', isLoggedIn, (req, res, next) => {
 }
 
 
-  User.findById(currentUserId).populate(populateQuery)
+  User.findById(currentUserId).populate(populateQuery).populate('notifications.post').populate('notifications.user')
   .then((foundCurrentUser)=>{
     res
     .status(200)

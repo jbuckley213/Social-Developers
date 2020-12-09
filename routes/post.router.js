@@ -3,14 +3,28 @@ const User = require("../models/user.model");
 const Post = require('../models/post.model');
 const Comment = require('../models/comment.model')
 const createError = require("http-errors");
+const uploader = require("./../config/cloundinary-setup");
 
 const router = express.Router();
 
 
-router.post("/", (req, res, next)=>{
-    const {postedBy, postContent} = req.body;
+router.post("/upload", uploader.single("image"), (req, res, next) => {
+    console.log("file is: ", req.file);
+  
+    if (!req.file) {
+      next(new Error("No file uploaded!"));
+      return;
+    }
+    // get secure_url from the file object and save it in the
+    // variable 'secure_url', but this can be any name, just make sure you remember to use the same in frontend
+    res.json({ secure_url: req.file.secure_url });
+  });
+  
 
-    Post.create({postedBy, postContent, likes:[], comments:[]})
+router.post("/", (req, res, next)=>{
+    const {postedBy, postContent, postPhoto} = req.body;
+    console.log(req.body)
+    Post.create({postedBy, postContent,postPhoto, likes:[], comments:[]})
     .then((createdPost)=>{
 
         const pr = User.findByIdAndUpdate(postedBy, {$push:{posts:createdPost._id}}, {new:true})
@@ -167,9 +181,14 @@ router.put("/:postId/likes", (req, res, next)=>{
             Post.findByIdAndUpdate(postId, {$push:{likes:currentUserId}})
             .then((likedPost)=>{
                 User.findByIdAndUpdate(currentUserId, {$push:{likes:likedPost._id}}, {new:true})
-                .then((updatedUser) =>{
+                .then((updatedCurrentUser) =>{
+
+                    const pr = User.update({"posts":{$in:[postId]}}, {$push: {notifications:{post:postId, info:"Liked", user:currentUserId}}})
+                    return pr
+                }).then((updatedUser)=>{
                     res.status(200).json(updatedUser)
-                }).catch((err)=>{
+                })
+                .catch((err)=>{
                     next( createError(err) );
         
                 })
@@ -221,8 +240,13 @@ router.post("/:postId/comment", (req, res, next)=>{
     .then((createComment => {
         Post.findByIdAndUpdate(postId,{$push:{comments:createComment._id}}, {new:true} ).populate("comments")
         .then((updatedPost)=>{
-            res.status(200).json(updatedPost)
 
+            const pr = User.update({"posts":{$in:[postId]}}, {$push: {notifications:{post:postId, info:"Commented", user:currentUserId}}})
+            return pr
+           
+
+        }).then((updatedUser)=>{
+            res.status(200).json(updatedUser)
         }).catch(err =>{
             next( createError(err) );
 

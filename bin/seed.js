@@ -11,8 +11,8 @@ const bcrypt = require('bcrypt');
 
 
 //requiring the 'fake' objects
-const user = require('./user-mock-data');
-const post = require('./job-mock-data');
+const users = require('./user-mock-data');
+const posts = require('./post-mock-data');
 
 const DB_NAME = "simple-steps";
 
@@ -35,56 +35,44 @@ mongoose
     })
     .then(() => {
         // 2.  CREATE THE DOCUMENTS FROM ARRAY OF authors
-        const pr = User.create(jobs);
+        const pr = Post.create(posts);
         return pr; // forwards the promise to next `then`
     })
-    .then((createdJobs) => {
-        console.log(`Created ${createdJobs.length} jobs`);
+    .then((createdPosts) => {
+        console.log(`Created ${createdPosts.length} posts`);
 
         // 3. WHEN .create() OPERATION IS DONE
         // UPDATE THE OBJECTS IN THE ARRAY OF user charities
-        const updatedCharityUser = userCharities.map((userCharity, i) => {
+        const updatedUsers = users.map((user, i) => {
             // Update the userCharity and set the corresponding job id
             // to create the reference
-            const job = createdJobs[i];
-            const jobId = job._id;
-            userCharity.jobsCreated = [jobId];
+            const post = createdPosts[i];
+            const postId = post._id;
+            user.posts = [postId];
 
             const salt = bcrypt.genSaltSync(saltRounds);
-            userCharity.password = bcrypt.hashSync(userCharity.password, salt);
-            return userCharity; // return the updated userCharity
+            user.password = bcrypt.hashSync(user.password, salt);
+            return user; // return the updated userCharity
         });
 
-        const pr = User.create(updatedCharityUser);
+        const pr = User.create(updatedUsers);
         return pr; // forwards the promise to next `then`
     })
-    .then((createdCharityUsers) => {
-        console.log(`Created ${createdCharityUsers.length} charities`);
+    .then((createdUsers) => {
+        console.log(`Created ${createdUsers.length} users`);
 
-        const promiseArr = createdCharityUsers.map((charityUser) => {
-            const jobId = String(charityUser.jobsCreated[0]);
-            const charityUserId = charityUser._id;
-            return Job.findByIdAndUpdate(jobId, { charity: charityUserId }, { new: true });
+        const promiseArr = createdUsers.map((user) =>{
+            const postId = String(user.posts[0]);
+             const userId = user._id;
+            return Post.findByIdAndUpdate(postId, { postedBy: userId }, { new: true });
         })
-        const pr = Promise.all(promiseArr); //makes one big promise around all promises coming from array
-        return pr
-    }).then((updatedJobs) => {
+         const pr = Promise.all(promiseArr); //makes one big promise around all promises coming from array
+         return pr
+        
 
-        const updatedVolunteerUser = userVolunteers.map((userVolunteer, i) => {
-            // Update the userCharity and set the corresponding job id
-            // to create the reference
-            const job = updatedJobs[i];
-            const jobId = job._id;
-            userVolunteer.jobsApplied = [jobId];
-
-            const salt = bcrypt.genSaltSync(saltRounds);
-            userVolunteer.password = bcrypt.hashSync(userVolunteer.password, salt);
-            return userVolunteer; // return the updated userCharity
-        });
-
-        const pr = User.create(updatedVolunteerUser)
-        return pr
-    }).then(() => {
+    })
+    
+    .then((updatedPosts) => {
         mongoose.connection.close();
 
     })

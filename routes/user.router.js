@@ -16,9 +16,27 @@ router.get('/', (req, res, next)=>{
 
 router.get('/:id', isAdmin, (req, res, next)=>{
 
+
+    const postPopulateQuery = {
+        path: 'posts',
+        model: 'Post',
+        populate: {
+            path: 'postedBy',
+            model: 'User'
+        }
+    }
+    const likesPopulateQuery = {
+        path: 'likes',
+        model: 'Post',
+        populate: {
+            path: 'postedBy',
+            model: 'User'
+        }
+    }
+
     const { id } = req.params
     const isAdmin = req.isAdmin
-    User.findById(id).populate("posts").populate("likes").populate("following")
+    User.findById(id).populate(postPopulateQuery).populate(likesPopulateQuery).populate("following")
     .then((user)=>{
         res.status(200).json({user, isAdmin})
     }).catch(err => {
