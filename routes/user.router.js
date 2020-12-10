@@ -128,4 +128,16 @@ router.put('/notifications/:notificationId', (req, res, next) =>{
 
 })
 
+router.get('/notifications/seen', (req, res, next)=>{
+    const currentUserId = req.session.currentUser._id
+
+    User.findByIdAndUpdate(currentUserId, {newNotification:false})
+    .then((userUpdated)=>{
+        res.status(200).json(userUpdated)
+    }).catch(err =>{
+        next( createError(err) );
+
+    })
+})
+
 module.exports = router;

@@ -145,7 +145,7 @@ const notificationPopulateQuery = {
 
 }
 
-  User.findById(currentUserId).populate(postPopulateQuery).populate(notificationPopulateQuery)
+  User.findById(currentUserId).populate(postPopulateQuery).populate(notificationPopulateQuery).populate('conversations')
   .then((foundCurrentUser)=>{
     res
     .status(200)

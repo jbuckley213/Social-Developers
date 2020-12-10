@@ -5,6 +5,7 @@ const Conversation = require('../models/conversation.model')
 const Message = require('../models/message.model')
 const createError = require("http-errors");
 
+
 const router = express.Router();
 
 
@@ -12,13 +13,23 @@ const router = express.Router();
 router.post("/:userId", (req,res, next)=>{
     const {userId} = req.params
     const currentUserId = req.session.currentUser._id
-    console.log(currentUserId)
+    let conversationId;    
     Conversation.create({users: [currentUserId, userId], messages:[]})
     .then((createdConversation)=>{
         console.log(createdConversation)
-        res.status(200).json(createdConversation)
+        conversationId = createdConversation._id
 
-    }).catch(err =>{
+        const pr = User.findByIdAndUpdate(currentUserId, {$push:{conversations:conversationId}})
+        return pr
+       
+
+    }).then(()=>{
+        const pr = User.findByIdAndUpdate(userId, {$push:{conversations:conversationId}})
+        return pr
+    }).then(()=>{
+        res.status(200).json()
+    })
+    .catch(err =>{
         next( createError(err) );
 
     })
@@ -39,9 +50,20 @@ router.get("/", (req,res, next) =>{
 })
 
 
+
 router.get("/:conversationId", (req, res,next)=>{
    const {conversationId} = req.params
-    Conversation.findById(conversationId).populate("users").populate("messages")
+   const messagePopulateQuery = {
+    path: 'messages',
+    model: 'Message',
+    populate: {
+        path: 'userSent',
+        model: 'User'
+    }
+}
+
+
+    Conversation.findById(conversationId).populate("users").populate(messagePopulateQuery)
     .then((conversationFound) =>{
         res.status(200).json(conversationFound)
     }).catch((err) =>{
