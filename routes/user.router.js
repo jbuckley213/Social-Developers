@@ -1,5 +1,7 @@
 const express = require("express");
 const User = require("../models/user.model");
+const Notification = require("../models/notification.model");
+
 const router = express.Router();
 const createError = require("http-errors");
 
@@ -34,9 +36,20 @@ router.get('/:id', isAdmin, (req, res, next)=>{
         }
     }
 
+    const notificationPopulateQuery = {
+        path: 'notifications',
+        model: 'Notification',
+        populate: {
+            path: 'userActivity',
+            model: 'User'
+        }
+    }
+
+   
+
     const { id } = req.params
     const isAdmin = req.isAdmin
-    User.findById(id).populate(postPopulateQuery).populate(likesPopulateQuery).populate("following")
+    User.findById(id).populate(postPopulateQuery).populate(likesPopulateQuery).populate("following").populate(notificationPopulateQuery)
     .then((user)=>{
         res.status(200).json({user, isAdmin})
     }).catch(err => {
@@ -93,6 +106,25 @@ router.put('/:id/unfollow', (req, res, next)=>{
 }).catch(err => {
     next( createError(err) );
 })
+
+})
+
+
+router.put('/notifications/:notificationId', (req, res, next) =>{
+    const { notificationId } = req.params
+
+    const currentUserId = req.session.currentUser._id
+
+    User.findByIdAndUpdate(currentUserId, {$pull:{notifications: notificationId}})
+    .then(()=>{
+        const pr = Notification.findByIdAndDelete(notificationId)
+        return pr
+    }).then((deletedNotification)=>{
+        res.status(200).json(deletedNotification)
+
+    }).catch((err)=>{
+        next( createError(err) );
+    })
 
 })
 

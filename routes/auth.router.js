@@ -126,7 +126,7 @@ router.get('/logout',  isLoggedIn, (req, res, next) => {
 router.get('/me', isLoggedIn, (req, res, next) => {
   const currentUserId = req.session.currentUser._id;
 
-  const populateQuery = {
+  const postPopulateQuery = {
     path: 'posts',
     model: 'Post',
     populate: {
@@ -135,8 +135,17 @@ router.get('/me', isLoggedIn, (req, res, next) => {
     }
 }
 
+const notificationPopulateQuery = {
+  path: 'notifications',
+  model: 'Notification',
+  populate: {
+    path: 'userActivity',
+    model: 'User'
+  }
 
-  User.findById(currentUserId).populate(populateQuery).populate('notifications.post').populate('notifications.user')
+}
+
+  User.findById(currentUserId).populate(postPopulateQuery).populate(notificationPopulateQuery)
   .then((foundCurrentUser)=>{
     res
     .status(200)

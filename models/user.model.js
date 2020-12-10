@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const Post = require("./post.model")
+const Notification = require("./notification.model")
 
 const userSchema = new Schema({
   firstName: String,
@@ -13,7 +14,7 @@ const userSchema = new Schema({
   followers: [{type: Schema.Types.ObjectId, ref:"User"}],
   following: [{type: Schema.Types.ObjectId, ref:"User"}],
   likes: [{type: Schema.Types.ObjectId, ref:"Post"}],
-  notifications: [{post:{type: Schema.Types.ObjectId, ref:"Post"}, user:{type: Schema.Types.ObjectId, ref:"User"} ,info:String}],
+  notifications: [{type: Schema.Types.ObjectId, ref:"Notification"}],
   newNotification:Boolean,
 
 

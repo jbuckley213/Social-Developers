@@ -1,6 +1,8 @@
 const express = require("express");
 const User = require("../models/user.model");
 const Post = require('../models/post.model');
+const Notification = require("../models/notification.model")
+
 const Comment = require('../models/comment.model')
 const createError = require("http-errors");
 const uploader = require("./../config/cloundinary-setup");
@@ -169,43 +171,49 @@ router.put("/:postId/likes", (req, res, next)=>{
         user.likes.forEach((postLiked)=>{
             console.log(typeof postId, typeof postLiked)
             if(postId === postLiked.toString()){
-                console.log("Liked already")
                 hasAlreadyLiked = true
             }
         })
         if(hasAlreadyLiked){
-            console.log("hasAlreadyLiked", hasAlreadyLiked)
             return next( createError(400) );
         } else{
 
-            Post.findByIdAndUpdate(postId, {$push:{likes:currentUserId}})
-            .then((likedPost)=>{
-                User.findByIdAndUpdate(currentUserId, {$push:{likes:likedPost._id}}, {new:true})
-                .then((updatedCurrentUser) =>{
-
-                    const pr = User.update({"posts":{$in:[postId]}}, {$push: {notifications:{post:postId, info:"Liked", user:currentUserId}}})
-                    return pr
-                }).then((updatedUser)=>{
-                    res.status(200).json(updatedUser)
+                Post.findByIdAndUpdate(postId, {$push:{likes:currentUserId}})
+                .then((likedPost)=>{
+                // User.findByIdAndUpdate(currentUserId, {$push:{likes:likedPost._id}}, {new:true})
+                const pr = Notification.create({userPost:likedPost.postedBy, post:likedPost._id, userActivity: currentUserId, notificationInfo:"like"})
+                return pr;
                 })
-                .catch((err)=>{
+                .then((notificationCreated) =>{
+                
+                        if(notificationCreated.userPost.toString() === currentUserId){
+                            return;
+                        }
+                        else{
+                        const pr = User.findByIdAndUpdate(notificationCreated.userPost, {$push: {notifications:notificationCreated._id}})
+                        return pr}
+                })
+                .then((updatedUser)=>{
+                            const pr = User.findByIdAndUpdate(currentUserId, {$push:{likes:postId}}, {new:true})
+                            return pr
+                })
+                .then((updatedCurrentUser)=>{
+                        res.status(200).json(updatedCurrentUser)
+                })
+                    
+                .catch((err) =>{
                     next( createError(err) );
-        
-                })
-            }).catch((err) =>{
-                next( createError(err) );
-        
-            })
-
-
             
-        }              
+                })
 
-    }).catch(err =>{
+        
+     
+        }}).catch(err =>{
         next( createError(err) );
 
     })
 })
+
 
 router.put("/:postId/unlikes", (req, res, next)=>{
     const { postId } = req.params;
@@ -241,13 +249,18 @@ router.post("/:postId/comment", (req, res, next)=>{
         Post.findByIdAndUpdate(postId,{$push:{comments:createComment._id}}, {new:true} ).populate("comments")
         .then((updatedPost)=>{
 
-            const pr = User.update({"posts":{$in:[postId]}}, {$push: {notifications:{post:postId, info:"Commented", user:currentUserId}}})
+            const pr = Notification.create({userPost:updatedPost.postedBy, post:updatedPost._id, userActivity: currentUserId, notificationInfo:"comment"})
+            return pr;
+
+         }).then((notificationCreated)=>{
+
+            const pr = User.findByIdAndUpdate(notificationCreated.userPost, {$push: {notifications:notificationCreated._id}})
             return pr
-           
 
         }).then((updatedUser)=>{
             res.status(200).json(updatedUser)
-        }).catch(err =>{
+        })
+        .catch(err =>{
             next( createError(err) );
 
         })
