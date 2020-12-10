@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const Post = require("./post.model")
 const Notification = require("./notification.model")
+const Conversation = require('./conversation.model')
 
 const userSchema = new Schema({
   firstName: String,
@@ -16,6 +17,7 @@ const userSchema = new Schema({
   likes: [{type: Schema.Types.ObjectId, ref:"Post"}],
   notifications: [{type: Schema.Types.ObjectId, ref:"Notification"}],
   newNotification:Boolean,
+  conversations: [{type: Schema.Types.ObjectId, ref:"Conversation"}],
 
 
 

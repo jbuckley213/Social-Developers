@@ -9,7 +9,6 @@ const notificationSchema = new Schema({
   post: {type: Schema.Types.ObjectId, ref:"Post"},
   userActivity: {type: Schema.Types.ObjectId, ref:"User"},
   notificationInfo: {type:String, enum:['like', 'comment','follow']},
-  newNotification:Boolean,
 
 
 

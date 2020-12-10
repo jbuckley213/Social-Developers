@@ -180,27 +180,42 @@ router.put("/:postId/likes", (req, res, next)=>{
 
                 Post.findByIdAndUpdate(postId, {$push:{likes:currentUserId}})
                 .then((likedPost)=>{
-                // User.findByIdAndUpdate(currentUserId, {$push:{likes:likedPost._id}}, {new:true})
-                const pr = Notification.create({userPost:likedPost.postedBy, post:likedPost._id, userActivity: currentUserId, notificationInfo:"like"})
-                return pr;
-                })
-                .then((notificationCreated) =>{
-                
-                        if(notificationCreated.userPost.toString() === currentUserId){
+
+                    if(likedPost.postedBy.toString() === currentUserId){
+
+                        User.findByIdAndUpdate(currentUserId, {$push:{likes:postId}}, {new:true}).then(()=>{
+                            res.status(200).json(likedPost)
                             return;
-                        }
-                        else{
-                        const pr = User.findByIdAndUpdate(notificationCreated.userPost, {$push: {notifications:notificationCreated._id}})
-                        return pr}
-                })
-                .then((updatedUser)=>{
-                            const pr = User.findByIdAndUpdate(currentUserId, {$push:{likes:postId}}, {new:true})
-                            return pr
-                })
-                .then((updatedCurrentUser)=>{
+
+                        }).catch(err=>{
+                            next( createError(err) );
+                        })
+                    }
+                    else{   //create Notification
+                        Notification.create({userPost:likedPost.postedBy, post:likedPost._id, userActivity: currentUserId, notificationInfo:"like"})
+
+                        .then((notificationCreated) =>{
+                
+                            if(notificationCreated.userPost.toString() === currentUserId){
+                                return;
+                            }
+                            else{
+                            const pr = User.findByIdAndUpdate(notificationCreated.userPost, {$push: {notifications:notificationCreated._id}, newNotification:true})
+                            return pr}
+                    })
+                    .then((updatedUser)=>{
+                                const pr = User.findByIdAndUpdate(currentUserId, {$push:{likes:postId}}, {new:true})
+                                return pr
+                    }).then((updatedCurrentUser)=>{
                         res.status(200).json(updatedCurrentUser)
-                })
+                    }).catch(err=>{
+                        next( createError(err) );
+                    }) 
+                    }
                     
+                })
+                
+                
                 .catch((err) =>{
                     next( createError(err) );
             
@@ -249,21 +264,35 @@ router.post("/:postId/comment", (req, res, next)=>{
         Post.findByIdAndUpdate(postId,{$push:{comments:createComment._id}}, {new:true} ).populate("comments")
         .then((updatedPost)=>{
 
-            const pr = Notification.create({userPost:updatedPost.postedBy, post:updatedPost._id, userActivity: currentUserId, notificationInfo:"comment"})
-            return pr;
+            if(updatedPost.postedBy.toString() === currentUserId){
+                res.status(200).json(updatedPost)
 
-         }).then((notificationCreated)=>{
+                return;
+            }else{
+                Notification.create({userPost:updatedPost.postedBy, post:updatedPost._id, userActivity: currentUserId, notificationInfo:"comment"})
 
-            const pr = User.findByIdAndUpdate(notificationCreated.userPost, {$push: {notifications:notificationCreated._id}})
-            return pr
 
-        }).then((updatedUser)=>{
-            res.status(200).json(updatedUser)
-        })
-        .catch(err =>{
-            next( createError(err) );
+                .then((notificationCreated)=>{
 
-        })
+                    if(notificationCreated.userPost.toString() === currentUserId){
+                        return;
+                    }else{
+                        const pr = User.findByIdAndUpdate(notificationCreated.userPost, {$push: {notifications:notificationCreated._id}})
+                        return pr
+                    }
+                    
+        
+                }).then((updatedUser)=>{
+                    res.status(200).json(updatedUser)
+                })
+                .catch(err =>{
+                    next( createError(err) );
+        
+                })
+            }
+
+
+         })
     })).catch(err =>{
         next( createError(err) );
 
