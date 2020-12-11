@@ -27,7 +27,7 @@ router.post("/:userId", (req,res, next)=>{
         const pr = User.findByIdAndUpdate(userId, {$push:{conversations:conversationId}})
         return pr
     }).then(()=>{
-        res.status(200).json()
+        res.status(200).json(conversationId)
     })
     .catch(err =>{
         next( createError(err) );

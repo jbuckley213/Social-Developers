@@ -4,6 +4,8 @@ const Notification = require("../models/notification.model");
 
 const router = express.Router();
 const createError = require("http-errors");
+const uploader = require("./../config/cloundinary-setup");
+
 
 const {isAdmin} = require("../helpers/middlewares");
 
@@ -106,6 +108,34 @@ router.put('/:id/unfollow', (req, res, next)=>{
 }).catch(err => {
     next( createError(err) );
 })
+
+})
+
+router.post("/upload", uploader.single("image"), (req, res, next) => {
+    console.log("file is: ", req.file);
+  
+    if (!req.file) {
+      next(new Error("No file uploaded!"));
+      return;
+    }
+    // get secure_url from the file object and save it in the
+    // variable 'secure_url', but this can be any name, just make sure you remember to use the same in frontend
+    res.json({ secure_url: req.file.secure_url });
+  });
+
+router.post('/edit', (req, res, next)=>{
+    const {image} = req.body;
+    const currentUserId = req.session.currentUser._id
+    console.log(image)
+
+    User.findByIdAndUpdate(currentUserId, {image:image})
+    .then((userUpdated)=>{
+        res.status(200).json(userUpdated)
+    }).catch(err =>{
+        next( createError(err) );
+
+    })    
+
 
 })
 

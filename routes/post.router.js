@@ -25,7 +25,6 @@ router.post("/upload", uploader.single("image"), (req, res, next) => {
 
 router.post("/", (req, res, next)=>{
     const {postedBy, postContent, postPhoto} = req.body;
-    console.log(req.body)
     Post.create({postedBy, postContent,postPhoto, likes:[], comments:[]})
     .then((createdPost)=>{
 

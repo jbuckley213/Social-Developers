@@ -77,7 +77,24 @@ router.post('/signup', isNotLoggedIn, validationLogin, (req, res, next) => {
 router.post('/login', isNotLoggedIn, validationLogin, (req, res, next) => {
   const { email, password } = req.body;
 
-  User.findOne({ email })
+  const postPopulateQuery = {
+    path: 'posts',
+    model: 'Post',
+    populate: {
+        path: 'postedBy',
+        model: 'User'
+    }
+}
+
+const notificationPopulateQuery = {
+  path: 'notifications',
+  model: 'Notification',
+  populate: {
+    path: 'userActivity',
+    model: 'User'
+  }
+}
+  User.findOne({ email }).populate(postPopulateQuery).populate(notificationPopulateQuery).populate('conversations')
     .then( (user) => {
       if (! user) {
         // If user with that username can't be found, respond with an error
