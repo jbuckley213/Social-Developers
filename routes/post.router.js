@@ -138,7 +138,8 @@ router.delete("/:postId/delete", (req, res, next)=>{
                 return pr
                 
 
-            }).then((updatedUsers)=>{
+            })
+            .then((updatedUsers)=>{
                 res.status(201).json(updatedUsers)
             })
             .catch((err)=>{

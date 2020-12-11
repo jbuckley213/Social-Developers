@@ -6,7 +6,7 @@ const Message = require("./conversation.model")
 const conversationSchema = new Schema({
   users: [{type: Schema.Types.ObjectId, ref:"User"}],
   messages: [{type: Schema.Types.ObjectId, ref:"Message"}],
- 
+  notifications: [{type: Schema.Types.ObjectId, ref:"User"}]
 
 
 

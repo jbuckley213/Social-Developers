@@ -16,7 +16,6 @@ router.post("/:userId", (req,res, next)=>{
     let conversationId;    
     Conversation.create({users: [currentUserId, userId], messages:[]})
     .then((createdConversation)=>{
-        console.log(createdConversation)
         conversationId = createdConversation._id
 
         const pr = User.findByIdAndUpdate(currentUserId, {$push:{conversations:conversationId}})
@@ -38,9 +37,16 @@ router.post("/:userId", (req,res, next)=>{
 router.get("/", (req,res, next) =>{
     const currentUserId = req.session.currentUser._id
 
-    Conversation.find({"users":{$in:[currentUserId]}}).populate("users").populate("messages")
+    const messagePopulateQuery = {
+        path: 'messages',
+        model: 'Message',
+        populate: {
+            path: 'userSent',
+            model: 'User'
+        }
+    }
+    Conversation.find({"users":{$in:[currentUserId]}}).populate("users").populate(messagePopulateQuery)
     .then((conversationsWithUserFound) =>{
-        console.log(conversationsWithUserFound)
         res.status(200).json(conversationsWithUserFound)
     }).catch((err)=>{
         next( createError(err) );
@@ -76,11 +82,11 @@ router.get("/:conversationId", (req, res,next)=>{
 router.post('/:conversationId/message', (req, res,next)=>{
     const {conversationId} = req.params
     const currentUserId = req.session.currentUser._id
-    const {messageContent} = req.body
-
+    const {messageContent, userSentToId} = req.body
+    console.log(userSentToId)
     Message.create({userSent:currentUserId, conversation:conversationId, messageContent:messageContent})
     .then((createdMessage)=>{
-        const pr =  Conversation.findByIdAndUpdate(conversationId, {$push:{messages:createdMessage._id}})
+        const pr =  Conversation.findByIdAndUpdate(conversationId, {$push:{messages:createdMessage._id, notifications:userSentToId}})// $push:
         return pr
         
     }).then((updatedConversation)=>{
@@ -92,6 +98,18 @@ router.post('/:conversationId/message', (req, res,next)=>{
     })
     
 
+})
+
+router.get('/:conversationId/message-seen', (req, res, next)=>{
+    const {conversationId} = req.params
+    const currentUserId = req.session.currentUser._id
+
+    Conversation.findByIdAndUpdate(conversationId, {$pull:{notifications:currentUserId}}).then((updatedConversation)=>{
+        res.status(200).json(updatedConversation)
+    }).catch(err => {
+        next( createError(err) );
+
+    })
 })
 
 module.exports = router;
