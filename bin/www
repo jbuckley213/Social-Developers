@@ -24,6 +24,48 @@ app.set("port", port);
 
 var server = http.createServer(app);
 
+const socketio = require("socket.io");
+const { isPrimitive } = require("util");
+const io = socketio(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+    allowedHeaders: ["my-custom-header"],
+    credentials: true,
+  },
+});
+
+io.on("connect", (socket) => {
+  console.log("connected");
+  var clients = io.sockets;
+  console.log(clients);
+  socket.on("join-main", ({ user }, callback) => {
+    socket.join("main");
+    console.log(user);
+    socket.to("main").emit("online", { user: user });
+    callback();
+  });
+
+  socket.on("join", ({ room, user }, callback) => {
+    console.log("joined");
+    socket.join(room);
+    // socket.join("main");
+    // socket.to("main").emit("online", { user: user });
+    callback();
+  });
+
+  socket.on("sendMessage", (sendObj, callback) => {
+    console.log(sendObj);
+    io.to(sendObj.conversationId).emit("message", { text: sendObj.message });
+
+    callback();
+  });
+
+  socket.on("disconnect", () => {
+    console.log("disconnected");
+  });
+});
+
 /**
  * Listen on provided port, on all network interfaces.
  */
