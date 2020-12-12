@@ -63,7 +63,8 @@ io.on("connect", (socket) => {
 
   socket.on("sendMessage", (sendObj, callback) => {
     console.log(sendObj);
-    socket.broadcast.emit("message", { text: sendObj.message }); //io.to(sendObj.conversationId)
+    console.log(typeof sendObj.conversationId);
+    socket.to(sendObj.conversationId).emit("message"); //io.to(sendObj.conversationId).emit("message", { text: sendObj.message });
     console.log("done");
     callback();
   });
