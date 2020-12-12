@@ -18,6 +18,8 @@ const userSchema = new Schema({
   notifications: [{type: Schema.Types.ObjectId, ref:"Notification"}],
   newNotification:Boolean,
   conversations: [{type: Schema.Types.ObjectId, ref:"Conversation"}],
+  darkMode: {type: Boolean, default:false}
+ //lastOnline:{type:Date, default: Date.now}
 
 
 

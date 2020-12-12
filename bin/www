@@ -34,15 +34,16 @@ const io = socketio(server, {
     credentials: true,
   },
 });
-
+var clients = {};
 io.on("connect", (socket) => {
   console.log("connected");
-  var clients = io.sockets;
-  console.log(clients);
+
   socket.on("join-main", ({ user }, callback) => {
     socket.join("main");
+    clients[socket.id] = user;
     console.log(user);
-    socket.to("main").emit("online", { user: user });
+
+    socket.to("main").emit("online", { users: clients });
     callback();
   });
 
@@ -54,14 +55,21 @@ io.on("connect", (socket) => {
     callback();
   });
 
+  socket.on("post", (message, callback) => {
+    console.log("posting");
+    socket.to("main").emit("postIncoming");
+    callback();
+  });
+
   socket.on("sendMessage", (sendObj, callback) => {
     console.log(sendObj);
-    io.to(sendObj.conversationId).emit("message", { text: sendObj.message });
-
+    socket.broadcast.emit("message", { text: sendObj.message }); //io.to(sendObj.conversationId)
+    console.log("done");
     callback();
   });
 
   socket.on("disconnect", () => {
+    delete clients[socket.id];
     console.log("disconnected");
   });
 });

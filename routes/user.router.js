@@ -170,4 +170,23 @@ router.get('/notifications/seen', (req, res, next)=>{
     })
 })
 
+router.post("/dark-mode", (req, res, next) =>{
+    const currentUserId = req.session.currentUser._id
+    const {darkMode} = req.body 
+    let mode;
+    if(darkMode === 'light'){
+        mode = false
+    }else if(darkMode === 'dark'){
+        mode = true
+    }
+
+    User.findByIdAndUpdate(currentUserId, {darkMode:mode})
+    .then((updatedUser)=>{
+        res.status(200).json(updatedUser)
+    }).catch((err)=>{
+        next( createError(err) );
+
+    })
+})  
+
 module.exports = router;
