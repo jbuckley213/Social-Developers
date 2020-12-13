@@ -305,11 +305,13 @@ router.post("/:postId/comment", (req, res, next)=>{
 
 router.delete("/:postId/comment/:commentId", (req, res, next)=>{
     const { postId, commentId } = req.params;
+    
     const currentUserId = req.session.currentUser._id
     
     Comment.findById(commentId).then((commentFound)=>{
-        if(commentFound.postedBy !== currentUserId){
-            res.status(403)
+        const commentOwnerId = commentFound.createdBy.toString()
+        if(commentOwnerId !== currentUserId){
+            res.status(403).json()
             return
         }
         else{
@@ -318,7 +320,7 @@ router.delete("/:postId/comment/:commentId", (req, res, next)=>{
                const pr = Post.findByIdAndUpdate(postId, {$pull:{comments:commentId}})
                return pr;
             }).then((updatedPost)=>{
-                res.status(200)
+                res.status(200).json(updatedPost)
             }).catch(err=>{
                 next( createError(err) );
         
