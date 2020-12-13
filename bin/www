@@ -69,6 +69,11 @@ io.on("connect", (socket) => {
     callback();
   });
 
+  socket.on("logout", () => {
+    delete clients[socket.id];
+    io.to("main").emit("online", { users: clients });
+  });
+
   socket.on("disconnect", () => {
     delete clients[socket.id];
     io.to("main").emit("online", { users: clients });

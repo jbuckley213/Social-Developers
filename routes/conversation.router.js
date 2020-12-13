@@ -112,4 +112,36 @@ router.get('/:conversationId/message-seen', (req, res, next)=>{
     })
 })
 
+
+router.delete('/:conversationId/message/:messageId', (req, res, next) =>{
+    const {conversationId, messageId} = req.params
+    const currentUserId = req.session.currentUser._id
+
+    Message.findById(messageId).then((messageFound)=>{
+        const userSentId = messageFound.userSent.toString()
+        
+        if(userSentId !== currentUserId){
+            res.status(403).json()
+            return
+        }else{
+
+            Message.findByIdAndRemove(messageId)
+            .then(()=>{
+               Conversation.findByIdAndUpdate(conversationId, {$pull:{messages:messageId}}, { new:true })
+               .then(() =>{
+                    res.status(200).json()
+               }) .catch(err => {
+                next( createError(err) );
+
+               })
+            })
+        }
+    }).catch(err =>{
+        next( createError(err) );
+
+    })
+
+    
+})
+
 module.exports = router;
