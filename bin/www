@@ -28,7 +28,11 @@ const socketio = require("socket.io");
 const { isPrimitive } = require("util");
 const io = socketio(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: [
+      "http://localhost:3000",
+      "https://social-developer-platform.herokuapp.com",
+      "http://social-developer-platform.herokuapp.com",
+    ],
     methods: ["GET", "POST"],
     allowedHeaders: ["my-custom-header"],
     credentials: true,
