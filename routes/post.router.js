@@ -25,13 +25,15 @@ router.post("/upload", uploader.single("image"), (req, res, next) => {
 
 router.post("/", (req, res, next)=>{
     const {postedBy, postContent, postPhoto} = req.body;
+    let newPost;
     Post.create({postedBy, postContent,postPhoto, likes:[], comments:[]})
     .then((createdPost)=>{
-
+        newPost=createdPost
         const pr = User.findByIdAndUpdate(postedBy, {$push:{posts:createdPost._id}}, {new:true})
         return pr
     }).then((updatedUser)=>{
-        res.status(201).json(updatedUser)
+        newPost.postedBy = updatedUser
+        res.status(201).json(newPost)
     }).catch((err)=>{
         next( createError(err) );
     })
