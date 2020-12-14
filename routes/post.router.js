@@ -192,7 +192,7 @@ router.put("/:postId/likes", (req, res, next)=>{
                         })
                     }
                     else{   //create Notification
-                        Notification.create({userPost:likedPost.postedBy, post:likedPost._id, userActivity: currentUserId, notificationInfo:"like"})
+                        Notification.create({userPost:likedPost.postedBy, post:likedPost._id, userActivity: currentUserId, notificationInfo:"liked"})
 
                         .then((notificationCreated) =>{
                 
@@ -269,7 +269,7 @@ router.post("/:postId/comment", (req, res, next)=>{
 
                 return;
             }else{
-                Notification.create({userPost:updatedPost.postedBy, post:updatedPost._id, userActivity: currentUserId, notificationInfo:"comment"})
+                Notification.create({userPost:updatedPost.postedBy, post:updatedPost._id, userActivity: currentUserId, notificationInfo:"commented"})
 
 
                 .then((notificationCreated)=>{
@@ -277,7 +277,7 @@ router.post("/:postId/comment", (req, res, next)=>{
                     if(notificationCreated.userPost.toString() === currentUserId){
                         return;
                     }else{
-                        const pr = User.findByIdAndUpdate(notificationCreated.userPost, {$push: {notifications:notificationCreated._id}})
+                        const pr = User.findByIdAndUpdate(notificationCreated.userPost, {$push: {notifications:notificationCreated._id}, newNotification:true})
                         return pr
                     }
                     

@@ -8,7 +8,7 @@ const notificationSchema = new Schema({
   userPost: {type: Schema.Types.ObjectId, ref:"User"},
   post: {type: Schema.Types.ObjectId, ref:"Post"},
   userActivity: {type: Schema.Types.ObjectId, ref:"User"},
-  notificationInfo: {type:String, enum:['like', 'comment','follow']},
+  notificationInfo: {type:String, enum:['liked', 'commented','follow']},
 
 
 

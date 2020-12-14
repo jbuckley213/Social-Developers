@@ -64,11 +64,23 @@ router.put('/:id/follow', (req, res, next)=>{
     const { id } = req.params
     const currentUserId = req.session.currentUser._id
 
-
-    User.findByIdAndUpdate(id, {$push:{followers:currentUserId}}, {new:true}).populate("posts").populate('users')
+    
+    
+    User.findByIdAndUpdate(currentUserId, {$push:{following:id}}, {new:true})
     .then((updatedUser)=>{
+        Notification.create({userPost: id, userActivity: currentUserId, notificationInfo:'follow'})
+       
+        .then((createdNotification)=>{
 
-        User.findByIdAndUpdate(currentUserId, {$push:{following:updatedUser._id}}, {new:true})
+            if(createdNotification.userPost.toString() === currentUserId){
+                return;
+            }else{
+                const pr = User.findByIdAndUpdate(id, {$push:{followers:currentUserId, notifications:createdNotification._id}, newNotification:true}, {new:true}).populate("posts").populate('users')
+                return pr
+            }
+
+          
+        })
         .then((updatedCurrentUser)=>{
             res.status(200).json(updatedCurrentUser)
 
