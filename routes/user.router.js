@@ -51,7 +51,7 @@ router.get('/:id', isAdmin, (req, res, next)=>{
 
     const { id } = req.params
     const isAdmin = req.isAdmin
-    User.findById(id).populate(postPopulateQuery).populate(likesPopulateQuery).populate("following").populate(notificationPopulateQuery)
+    User.findById(id).populate(postPopulateQuery).populate(likesPopulateQuery).populate("following").populate(notificationPopulateQuery).populate('conversations')
     .then((user)=>{
         res.status(200).json({user, isAdmin})
     }).catch(err => {
