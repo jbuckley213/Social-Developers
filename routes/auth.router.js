@@ -33,7 +33,7 @@ router.post("/upload", uploader.single("image"), (req, res, next) => {
 
 // POST '/auth/signup'
 router.post('/signup', isNotLoggedIn, validationLogin, (req, res, next) => {
-  const { firstName, lastName, email, password, image } = req.body;
+  let { firstName, lastName, email, password, image } = req.body;
   console.log(req.body)
   User.findOne({ email })
     .then( (foundUser) => {
@@ -46,6 +46,10 @@ router.post('/signup', isNotLoggedIn, validationLogin, (req, res, next) => {
         // If username is available, go and create a new user
         const salt = bcrypt.genSaltSync(saltRounds);
         const encryptedPassword = bcrypt.hashSync(password, salt);
+
+        if(image ===''){
+          image ="https://www.pngkey.com/png/detail/115-1150152_default-profile-picture-avatar-png-green.png"
+        }
 
         User.create( { firstName, lastName, email, image, password: encryptedPassword })
           .then( (createdUser) => {

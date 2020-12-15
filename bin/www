@@ -78,6 +78,13 @@ io.on("connect", (socket) => {
     io.to("main").emit("online", { users: clients });
   });
 
+  socket.on("notification", (userId, callback) => {
+    console.log("notification", userId);
+
+    socket.broadcast.emit("notification", { userId });
+    callback();
+  });
+
   socket.on("disconnect", () => {
     delete clients[socket.id];
     io.to("main").emit("online", { users: clients });

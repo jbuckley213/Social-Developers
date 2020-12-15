@@ -8,7 +8,7 @@ const userSchema = new Schema({
   firstName: String,
   lastName:String,
   email:{ type: String, unique: true, required: true},
-  image: String,
+  image: {type:String, default:'https://www.pngkey.com/png/detail/115-1150152_default-profile-picture-avatar-png-green.png'},
   status:String,
   password: String,
   posts: [{type: Schema.Types.ObjectId, ref:"Post"}],

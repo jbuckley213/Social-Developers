@@ -105,7 +105,6 @@ router.get("/:postId", (req, res, next)=>{
     }
 
     const { postId } = req.params;
-    console.log(req.params.postId)
     Post.findById(postId).populate("postedBy").populate("likes").populate(populateQuery)
     .then((onePost)=>{
         res.status(201).json(onePost)
@@ -123,7 +122,6 @@ router.delete("/:postId/delete", (req, res, next)=>{
 
     Post.findById(postId)
     .then((foundPost)=>{
-            console.log("Posted by", typeof foundPost.postedBy, typeof currentUserId )
         if(foundPost.postedBy.toString() !== currentUserId){
             return next( createError(400) )
             
@@ -171,7 +169,6 @@ router.put("/:postId/likes", (req, res, next)=>{
     User.findById(currentUserId).then((user)=>{
         let hasAlreadyLiked =false;
         user.likes.forEach((postLiked)=>{
-            console.log(typeof postId, typeof postLiked)
             if(postId === postLiked.toString()){
                 hasAlreadyLiked = true
             }
@@ -259,7 +256,6 @@ router.post("/:postId/comment", (req, res, next)=>{
     const { postId } = req.params;
     const currentUserId = req.session.currentUser._id
     const { commentContent } = req.body;
-    console.log(req.body)
 
     Comment.create({createdBy:currentUserId, commentContent, post:postId})
     .then((createComment => {
