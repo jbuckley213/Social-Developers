@@ -19,10 +19,10 @@ const userCollection = [
         followers: [],
         following: [],
         likes: [],
-        // image: "",
+         image: "https://media.istockphoto.com/photos/african-stylish-woman-using-smart-phone-picture-id1134000432?b=1&k=6&m=1134000432&s=170x170&h=enBtmtCH2dlwXp9CZNdxyYKEQ2K-oJ8NJwUfgPyVxuA=",
     },
     {
-        firstName: "Jamie",
+        firstName: "Fred",
         lastName: "Garrett",
         password: "123456",
         email: "nick@mail.com",
@@ -30,7 +30,7 @@ const userCollection = [
         followers: [],
         following: [],
         likes: [],
-        // image: "",
+         image: "https://media.istockphoto.com/photos/portrait-of-handsome-afro-man-using-his-mobile-picture-id890698790?b=1&k=6&m=890698790&s=170x170&h=DvikSm6ODniIGYcbjcYe5vxJFXZTPm_dNRryFFMIC3Y=",
     },
     {
         firstName: "Lucy",
@@ -44,7 +44,7 @@ const userCollection = [
         image: "https://media-exp1.licdn.com/dms/image/C4D03AQFOUqw7rw-ACw/profile-displayphoto-shrink_800_800/0?e=1611792000&v=beta&t=QxUi-WHKlb3IRsqSrv-OyqfwX4nBkA7_X5OrFvk-aVo",
     },
     {
-        firstName: "Salvatore",
+        firstName: "David",
         lastName: "Morise",
         password: "123456",
         email: "salva@mail.com",
@@ -52,7 +52,7 @@ const userCollection = [
         followers: [],
         following: [],
         likes: [],
-        // image: "",
+        image: "https://images.unsplash.com/photo-1504593811423-6dd665756598?ixid=MXwxMjA3fDB8MHxzZWFyY2h8MTZ8fHBlcnNvbnxlbnwwfHwwfA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
     },
     {
         firstName: "Jaime",

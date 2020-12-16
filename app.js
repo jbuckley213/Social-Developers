@@ -34,10 +34,7 @@ const app = express();
 app.use(
   cors({
     credentials: true,
-    origin: [process.env.PUBLIC_DOMAIN, 
-      "https://social-developer-platform.herokuapp.com", 
-      "http://social-developer-platform.herokuapp.com"
-    ],
+    origin: [process.env.PUBLIC_DOMAIN],
   }),
 );
 
@@ -71,12 +68,7 @@ app.use('/api/users', userRouter);
 app.use("/api/posts", postRouter)
 app.use('/api/conversations', conversationRouter)
 
-// ROUTE FOR SERVING REACT APP (index.html)
 
-app.use((req, res, next) => {
-  // If no previous routes match the request, send back the React app.
-  res.sendFile(__dirname + "/public/index.html");
-});
 
 
 // ERROR HANDLING
