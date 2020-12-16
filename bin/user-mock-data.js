@@ -22,8 +22,8 @@ const userCollection = [
         // image: "",
     },
     {
-        firstName: "Sergi",
-        lastName: "Sergi",
+        firstName: "Jamie",
+        lastName: "Garrett",
         password: "123456",
         email: "nick@mail.com",
         posts: [],
@@ -34,7 +34,7 @@ const userCollection = [
     },
     {
         firstName: "Lucy",
-        lastName: "Lucy",
+        lastName: "Quinn",
         password: "123456",
         email: "lucy@mail.com",
         posts: [],
@@ -45,7 +45,7 @@ const userCollection = [
     },
     {
         firstName: "Salvatore",
-        lastName: "Salva",
+        lastName: "Morise",
         password: "123456",
         email: "salva@mail.com",
         posts: [],
@@ -56,7 +56,7 @@ const userCollection = [
     },
     {
         firstName: "Jaime",
-        lastName: "Jaime",
+        lastName: "Pinto",
         password: "123456",
         email: "sarah@mail.com",
         posts: [],
