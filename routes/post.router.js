@@ -49,10 +49,17 @@ router.get("/", (req, res, next)=>{
     const populateQuery = {
         path: 'posts',
         model: 'Post',
-        populate: {
+        populate: [{
             path: 'postedBy',
             model: 'User'
-        }
+        },{
+            path: 'comments',
+            model: 'Comment',
+            populate: {
+                path:'createdBy', 
+                model:"User"
+            }
+        }]
     }
    
 
@@ -257,13 +264,18 @@ router.post("/:postId/comment", (req, res, next)=>{
     const currentUserId = req.session.currentUser._id
     const { commentContent } = req.body;
 
+    let comment;
+
     Comment.create({createdBy:currentUserId, commentContent, post:postId})
     .then((createComment => {
+        comment = createComment
+        comment.createdBy = req.session.currentUser
+        
         Post.findByIdAndUpdate(postId,{$push:{comments:createComment._id}}, {new:true} ).populate("comments")
         .then((updatedPost)=>{
 
             if(updatedPost.postedBy.toString() === currentUserId){
-                res.status(200).json(updatedPost)
+                res.status(200).json(comment)
 
                 return;
             }else{
@@ -281,7 +293,7 @@ router.post("/:postId/comment", (req, res, next)=>{
                     
         
                 }).then((updatedUser)=>{
-                    res.status(200).json(updatedUser)
+                    res.status(200).json(comment)
                 })
                 .catch(err =>{
                     next( createError(err) );

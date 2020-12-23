@@ -150,10 +150,17 @@ router.get('/me', isLoggedIn, (req, res, next) => {
   const postPopulateQuery = {
     path: 'posts',
     model: 'Post',
-    populate: {
+    populate: [{
         path: 'postedBy',
         model: 'User'
-    }
+    }, {
+        path: 'comments', 
+        model:"Comment",
+        populate:{
+          path:"createdBy",
+          model:"User"
+        }
+    }]
 }
 
 const notificationPopulateQuery = {
