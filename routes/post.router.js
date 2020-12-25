@@ -24,9 +24,9 @@ router.post("/upload", uploader.single("image"), (req, res, next) => {
   
 
 router.post("/", (req, res, next)=>{
-    const {postedBy, postContent, postPhoto} = req.body;
+    const {postedBy, postContent, postPhoto, code} = req.body;
     let newPost;
-    Post.create({postedBy, postContent,postPhoto, likes:[], comments:[]})
+    Post.create({postedBy, postContent,postPhoto,code, likes:[], comments:[]})
     .then((createdPost)=>{
         newPost=createdPost
         const pr = User.findByIdAndUpdate(postedBy, {$push:{posts:createdPost._id}}, {new:true})
