@@ -91,6 +91,14 @@ io.on("connect", (socket) => {
     callback();
   });
 
+  socket.on("typing", ({ room, value }, callback) => {
+    if (value.length !== 0) {
+      socket.to(room).emit("type");
+    } else {
+      socket.to(room).emit("StopType");
+    }
+  });
+
   socket.on("notification", (userId, callback) => {
     console.log("notification", userId);
 

@@ -10,7 +10,15 @@ const uploader = require("./../config/cloundinary-setup");
 const {isAdmin} = require("../helpers/middlewares");
 
 router.get('/', (req, res, next)=>{
-    User.find().populate("posts")
+    const postPopulateQuery = {
+        path: 'posts',
+        model: 'Post',
+        populate: {
+            path: 'postedBy',
+            model: 'User'
+        }
+    }
+    User.find().populate(postPopulateQuery)
     .then((users)=>{
         res.status(200).json(users)
     }).catch(err => {
