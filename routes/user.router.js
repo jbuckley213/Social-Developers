@@ -15,7 +15,8 @@ router.get('/', (req, res, next)=>{
         model: 'Post',
         populate: {
             path: 'postedBy',
-            model: 'User'
+            model: 'User',
+            
         }
     }
     User.find().populate(postPopulateQuery)
@@ -32,18 +33,23 @@ router.get('/:id', isAdmin, (req, res, next)=>{
     const postPopulateQuery = {
         path: 'posts',
         model: 'Post',
-        populate: {
+        populate: [{
             path: 'postedBy',
             model: 'User'
-        }
+        }, {
+        path: 'likes',
+        model: 'User'}]
     }
     const likesPopulateQuery = {
         path: 'likes',
         model: 'Post',
-        populate: {
+        populate: [{
             path: 'postedBy',
             model: 'User'
-        }
+        }, {
+            path: 'likes',
+            model: 'User'}
+    ]
     }
 
     const notificationPopulateQuery = {

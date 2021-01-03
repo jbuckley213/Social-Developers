@@ -84,10 +84,13 @@ router.post('/login', isNotLoggedIn, validationLogin, (req, res, next) => {
   const postPopulateQuery = {
     path: 'posts',
     model: 'Post',
-    populate: {
+    populate: [{
         path: 'postedBy',
         model: 'User'
-    }
+    },{
+      path:"likes",
+      model:'User'
+    }]
 }
 
 const notificationPopulateQuery = {
@@ -150,17 +153,24 @@ router.get('/me', isLoggedIn, (req, res, next) => {
   const postPopulateQuery = {
     path: 'posts',
     model: 'Post',
-    populate: [{
+    populate: [
+      {
         path: 'postedBy',
         model: 'User'
-    }, {
+    },
+     {
+      path:"likes",
+      model:'User'
+    }, 
+    {
         path: 'comments', 
         model:"Comment",
         populate:{
           path:"createdBy",
           model:"User"
         }
-    }]
+    }
+  ]
 }
 
 const notificationPopulateQuery = {
@@ -175,6 +185,7 @@ const notificationPopulateQuery = {
 
   User.findById(currentUserId).populate(postPopulateQuery).populate(notificationPopulateQuery).populate('conversations')
   .then((foundCurrentUser)=>{
+    console.log(foundCurrentUser.posts[0].likes)
     res
     .status(200)
     .json(foundCurrentUser)

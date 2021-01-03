@@ -59,6 +59,9 @@ router.get("/", (req, res, next)=>{
                 path:'createdBy', 
                 model:"User"
             }
+        }, {
+            path: 'likes',
+            model: 'User',
         }]
     }
    
